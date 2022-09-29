@@ -1,0 +1,173 @@
+﻿@model OnlineShoppingSystem.Models.Employee
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<partial name="_employeePartial" />
+<h1>Create</h1>
+
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="employeeForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="button" id="create" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <h2>Get all data</h2>
+    <button type="button" class="btn btn-success mb-2" id="getEmployee">Get Data</button>
+    
+    <table id="empTable" class="table table-bordered table-striped">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Action</th>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        function handleRemove(val){
+            let id = $(val).attr("data-id");
+            $.ajax({
+                url: '/api/EmployeeAPI/DeleteEmployee/'+id,
+                type: 'DELETE',
+                success: function(){
+                    alert("delete successfully");
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            })
+        }
+        function handleEdit(val){
+           let id = $(val).attr("data-id");
+           $.ajax({
+               url: "/api/EmployeeAPI/GetEmployeeById/"+id,
+               type: 'GET',
+               contentType: "application/json",
+               success: function(response) {
+                   //console.log(response);
+                   $("#employeeModal").modal({
+                       show: true
+                   });
+                    $(".modal-title").text("Employee Details");
+                    //$("#employeeModal :input[type=text], input[type=email]").attr('disabled', 'disabled');
+                    $("#Name").val(response.name);
+                    $("#Email").val(response.email);
+                    $("#Address").val(response.address);
+                    $("#updateEmployee").attr("data-id",id);
+               },
+               error: function(err) {
+                   alert("something wrong");
+               }
+           })
+
+        }
+        $(document).ready(function(){
+            $("#updateEmployee").on('click',function(){
+                let id = $(this).attr("data-id");
+                let obj = {
+                    "Name": $("#Name").val(),
+                    "Email": $("#Email").val(),
+                    "Address": $("#Address").val(),
+                }
+                $.ajax({
+                    url: '/api/EmployeeAPI/PutEmployee/',
+                    type: 'PUT',
+                    data: '{id:'+id+',employee:'+JSON.stringify(obj)+'}',
+                    dataType: 'json',
+                    contentType: 'application/json; charset = utf-8',
+                    success: function(){
+                        alert('update Successfully');
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                })
+            });
+
+            $("#getEmployee").click(function(){
+                $.ajax({
+                    url: '/api/EmployeeAPI/GetAllEmployees',
+                    type: 'GET',
+                    dataType: 'json',//The dataType attribute is only used when you're getting data from the server.
+                    contentType: "application/json", //You should be setting contentType to application/ json when sending data to the server.
+                    success: function (res) {
+                        $("#empTable").empty();
+                        var result = '';
+                        $.each(res, function (index, row) {
+                            //console.log(row);
+                            //console.log(row[index].name);
+                            //console.log(row.name);
+                            result += "<tr><td>" + row.name + "</td><td>" + row.email + "</td><td>" + row.address + "</td>"
+                            +"<td>"
+                            +"<button type='button' class='btn btn-success' data-id="+row.id+" onclick='handleEdit(this)'>Edit</button>&nbsp;"
+                                + "<button type='button' class='btn btn-primary' data-id=" + row.id + " onclick='handleDetail(this)'>View</button>&nbsp;"
+                                + "<button type='button' class='btn btn-danger' data-id=" + row.id + " onclick='handleRemove(this)'>Delete</button>&nbsp;"
+                            +"</td></tr>";
+                        })
+
+                        $("#empTable").append(result);
+                    },
+                    error: function (err) {
+                        alert("something went wrong");
+                    }
+                })
+            })
+            $("#create").on("click",function(){
+                let obj = {
+                    "Name":$("#Name").val(),
+                    "Email": $("#Email").val(),
+                    "Address": $("#Address").val(),
+                }
+
+                $.ajax({
+                    url: "https://localhost:44327/api/EmployeeAPI/PostEmployee/",
+                    type: "POST",
+                    data: JSON.stringify(obj),
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function () {
+                        alert('Successfully received Data ');
+                        console.log();
+                    },
+                    error: function () {
+                        alert('Failed to receive the Data');
+                        console.log('Failed ');
+                    }
+                })
+            });
+        })
+    </script>
+}

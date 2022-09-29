@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Online-Shopping-System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light" style="background: linear-gradient(to right, #2193b0, #6dd5ed);">
+             <div class="container">
+                 <a class="navbar-brand text-white" style="font-size: xx-large;" asp-area="" asp-controller="Home" asp-action="Index">
+                     <span class="first-letter p-1">S</span><span class="other-letter pr-1">hopping</span>
+                     <span class="first-letter p-1">R</span><span class="other-letter pr-1">oom</span>
+                     </a>
+             </div>
+        </nav>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow" style="background: linear-gradient(to right, #ff416c, #ff4b2b); ">
+            <div class="container">
+                <button class="navbar-toggler" type="button" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"><ion-icon name="menu" style="font-size: 25px;">Menu</ion-icon></span>
+                </button>
+                <span style="display:none;" class="x-cancel"><ion-icon name="close"></ion-icon></span>
+                <div class="navbar-collapse collapse d-sm-inline-flex" id="aa">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>                   
+                        <li class="nav-item">  
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                        </li>                  
+                        <li class="nav-item">  
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">All Categories</a>
+                        </li>                 
+                        <li class="nav-item">  
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">All Products</a>
+                        </li>                  
+                        <li class="nav-item">  
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+                        </li> 
+                        <li>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Employees" asp-action="Index">Employees</a>
+                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white">@User.Identity.Name</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a>
+                            </li>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+
+                            }
+                        } else
+                        {
+                            
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Secured">Login</a>
+                        </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+     <main role="main" class="pb-3 container pt-3">
+            @RenderBody()
+     </main>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - WebApplication2 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".navbar-toggler").on("click",function(){
+                if ($(".navbar-toggler").is(":visible")) {
+                    $('#aa').animate({ width: 'toggle' }, 300);
+                    $(".x-cancel").show();
+                    $(".x-cancel").css({
+                        "position": "fixed",
+                        "top": "0",
+                        "right": "0",
+                        "color": "beige",
+                        "font-size": "18px",
+                        "cursor": "pointer",
+                        "padding": "0 10px",
+                        "z-index": "2"
+                    });
+                } else {
+                     $(".x-cancel").hide();
+                }
+            });
+            $(".x-cancel").click(function(){
+                $('#aa').animate({width:'toggle'},300);
+                $(".x-cancel").hide();
+            })
+        });
+    </script>
+</body>
+</html>
